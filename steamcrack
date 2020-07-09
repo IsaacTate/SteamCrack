@@ -27,10 +27,6 @@ try:
             print("Error: The game is either invalid or not piratable")
             show()
             sys.exit()
-            print("Collecting URL...failed")
-            print("Error: The game is either invalid or not piratable")
-            show()
-            sys.exit()
     else:
         crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
         crohasitSourceLines = crohasitSource.split("\n")
@@ -49,10 +45,16 @@ try:
                     crohasitSourceLines = crohasitSource.split("\n")
                     uploadhaven = crohasitSourceLines[crohasitSourceLines.index("<!-- Download button -->")+1].split('"')[5]
                 except ValueError:
-                    crohasitURL = "https://crohasit.net/{0}-free-game-download/".format(gameName)
-                    crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
-                    crohasitSourceLines = crohasitSource.split("\n")
-                    uploadhaven = crohasitSourceLines[crohasitSourceLines.index("<!-- Download button -->")+1].split('"')[5]
+                    try:
+                        crohasitURL = "https://crohasit.net/{0}-free-game-download/".format(gameName)
+                        crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
+                        crohasitSourceLines = crohasitSource.split("\n")
+                        uploadhaven = crohasitSourceLines[crohasitSourceLines.index("<!-- Download button -->")+1].split('"')[5]
+                    except ValueError:
+                        print("Collecting URL..failed")
+                        print("Error: The game is either invalid or not piratable")
+                        show()
+                        sys.exit()
         print("Collecting URL..done")
         print("URL: {0}".format(uploadhaven))
         show()
