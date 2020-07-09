@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+import requests
+import sys
+from cursor import show, hide
+hide()
+try:
+    if len(sys.argv) != 2:
+        print("Format: SteamCrack steamurl")
+        show()
+        sys.exit()
+    gameName = sys.argv[1].replace("/", " ").split()[-1].replace("__", "_").replace("_", "-")
+    crohasitURL = "https://crohasit.net/{0}-free-download/".format(gameName)
+    steamunlockedURL = 'https://steamunlocked.net/{0}-free-download/'.format(gameName)
+    print("Collecting URL...", end="\r")
+    steamunlockedSource = requests.get(steamunlockedURL).text
+    steamunlockedSourceLines = steamunlockedSource.split("\n")
+    if 'Page not found &raquo; STEAMUNLOCKED' not in steamunlockedSource:
+        try:
+            uploadhavenPosition = steamunlockedSourceLines.index('style="text-align: center;"><a')+1
+            uploadhaven = steamunlockedSourceLines[uploadhavenPosition].split('"')[3]
+            print("Collecting URL...done")
+            print("URL: {0}".format(uploadhaven))
+            show()
+            sys.exit()
+        except (IndexError, ValueError):
+            print("Collecting URL..failed")
+            print("Error: The game is either invalid or not piratable")
+            show()
+            sys.exit()
+            print("Collecting URL...failed")
+            print("Error: The game is either invalid or not piratable")
+            show()
+            sys.exit()
+    else:
+        crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
+        crohasitSourceLines = crohasitSource.split("\n")
+        try:
+            uploadhaven = crohasitSourceLines[crohasitSourceLines.index("<!-- Download button -->")+1].split('"')[5]
+        except ValueError:
+            try:
+                crohasitURL = "https://crohasit.net/{0}-free-pc-download/".format(gameName)
+                crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
+                crohasitSourceLines = crohasitSource.split("\n")
+                uploadhaven = crohasitSourceLines[crohasitSourceLines.index("<!-- Download button -->")+1].split('"')[5]
+            except ValueError:
+                crohasitURL = "https://crohasit.net/{0}-pc-free-game-download/".format(gameName)
+                crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
+                crohasitSourceLines = crohasitSource.split("\n")
+                uploadhaven = crohasitSourceLines[crohasitSourceLines.index("<!-- Download button -->")+1].split('"')[5]
+        print("Collecting URL..done")
+        print("URL: {0}".format(uploadhaven))
+        show()
+        sys.exit()
+except KeyboardInterrupt:
+    print("Aborting")
+    show()
+    exit()
+except requests.exceptions.ConnectionError:
+    print("Error: Connection Failed. Please try again")
+    show()
+    exit()
