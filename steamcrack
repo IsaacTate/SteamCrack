@@ -9,24 +9,18 @@ try:
         show()
         sys.exit()
     gameName = sys.argv[1].replace("/", " ").split()[-1].replace("__", "_").replace("_", "-")
-    crohasitURL = "https://crohasit.net/{0}-free-download/".format(gameName)
-    steamunlockedURL = 'https://steamunlocked.net/{0}-free-download/'.format(gameName)
+    crohasitURL = "https://crohasit.net/{0}-free-download/".format(gameName.lower())
+    steamunlockedURL = 'https://steamunlocked.net/{0}-free-download/'.format(gameName.lower())
     print("Collecting URL...", end="\r")
     steamunlockedSource = requests.get(steamunlockedURL).text
     steamunlockedSourceLines = steamunlockedSource.split("\n")
     if 'Page not found &raquo; STEAMUNLOCKED' not in steamunlockedSource:
-        try:
-            uploadhavenPosition = steamunlockedSourceLines.index('style="text-align: center;"><a')+1
-            uploadhaven = steamunlockedSourceLines[uploadhavenPosition].split('"')[3]
-            print("Collecting URL...done")
-            print("URL: {0}".format(uploadhaven))
-            show()
-            sys.exit()
-        except (IndexError, ValueError):
-            print("Collecting URL..failed")
-            print("Error: The game is either invalid or not piratable")
-            show()
-            sys.exit()
+        uploadhavenPosition = steamunlockedSourceLines.index('style="text-align: center;"><a')+1
+        uploadhaven = steamunlockedSourceLines[uploadhavenPosition].split('"')[3].replace("https://linksunlocked.com/?token=", "https://uploadhaven.com/download/")
+        print("Collecting URL...done")
+        print("URL: {0}".format(uploadhaven))
+        show()
+        sys.exit()
     else:
         crohasitSource = requests.get(crohasitURL, headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'}).text
         crohasitSourceLines = crohasitSource.split("\n")
